@@ -1,0 +1,48 @@
+- name: Create SNMPv2 monitored host
+  hosts: localhost
+  connection: local
+
+  tasks:
+
+  - name: Set API Token
+    set_fact:
+      ansible_zabbix_auth_key: "{{ zabbix_key }}"
+
+  - name: Update host in Zabbix
+    vars:
+      ansible_network_os: community.zabbix.zabbix
+      ansible_connection: httpapi
+      ansible_httpapi_port: 443
+      ansible_httpapi_use_ssl: true
+      ansible_httpapi_validate_certs: false
+      ansible_host: "{{ zabbix_host }}"
+      ansible_zabbix_url_path: ""
+    become: false
+    community.zabbix.zabbix_host:
+      host_name: "{{ name }}"
+      description: "{{ url }}"
+      host_groups:
+        - Network
+      link_templates:
+        - "{{ template }}"
+      status: "{{ status }}"
+      state: present
+      inventory_mode: manual
+      inventory_zabbix:
+        serialno_a: "{{ serial }}"
+      interfaces:
+        - type: 2
+          main: 1
+          useip: 1
+          ip: "{{ ip }}"
+          port: "161"
+          details:
+              community: '{$SNMP_COMMUNITY}'
+              version: 2
+      proxy: "zabbix_proxy"
+      macros:
+        - macro: '{$SNMP_COMMUNITY}'
+          value: zabbix
+      tags:
+        - tag: Vendor
+          value: "{{ vendor }}"

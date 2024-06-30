@@ -1,0 +1,240 @@
+[
+  {
+    "id": "device_delete",
+    "execute-command": "/etc/webhook/remove_host.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.name"
+      }
+    ]
+  },
+  {
+    "id": "device_update",
+    "execute-command": "/etc/webhook/update_host.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.name"
+      }
+    ],
+    "trigger-rule":
+    {
+    "and": [
+      {
+        "match":
+        {
+          "type": "value",
+          "value": "active",
+          "parameter":
+          {
+            "source": "payload",
+            "name": "data.status.value"
+          }
+        }
+      },
+      {
+        "or": [
+          {
+            "match": {
+              "type": "value",
+              "value": "net-core-switch",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-access-switch",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-wifi-switch",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-video-switch",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-wireless",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-wireless-lan-controller",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-video-cam",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-wan-firewall",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-security-gateway",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          },
+          {
+            "match": {
+              "type": "value",
+              "value": "net-wan-router",
+              "parameter": {
+                "source": "payload",
+                "name": "data.role.slug"
+              }
+            }
+          }
+        ]
+      }
+      ]
+    }
+   },
+   {
+    "id": "interface_update",
+    "execute-command": "/etc/webhook/create_interface.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.a_terminations"
+      },
+      {
+        "source": "payload",
+        "name": "data.b_terminations"
+      },
+    ]
+   },
+   {
+    "id": "interface_delete",
+    "execute-command": "/etc/webhook/delete_interface.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.a_terminations"
+      },
+      {
+        "source": "payload",
+        "name": "data.b_terminations"
+      },
+    ]
+  },
+  {
+    "id": "device_disable",
+    "execute-command": "/etc/webhook/disable_host.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.name"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "Offline",
+        "parameter":
+        {
+          "source": "payload",
+          "name": "data.status.label"
+        }
+      }
+    }
+  },
+  {
+    "id": "device_delete_inv",
+    "execute-command": "/etc/webhook/remove_host.sh",
+    "command-working-directory": "/etc/webhook/",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "data.name"
+      }
+    ],
+    "trigger-rule":
+    {
+    "or":
+      [
+        {
+         "match":
+         {
+           "type": "value",
+           "value": "inventory",
+           "parameter":
+           {
+             "source": "payload",
+             "name": "data.status.value"
+           }
+         }
+       },
+        {
+         "match":
+         {
+           "type": "value",
+           "value": "planned",
+           "parameter":
+           {
+             "source": "payload",
+             "name": "data.status.value"
+           }
+         }
+       }
+     ]
+    }
+  }
+]
